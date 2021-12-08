@@ -1,0 +1,2 @@
+# libwmi
+lib of wmi
