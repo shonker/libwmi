@@ -27,8 +27,7 @@ HRESULT EventSink::QueryInterface(REFIID riid, void ** ppv)
 }
 
 
-HRESULT EventSink::Indicate(long lObjectCount,
-                            IWbemClassObject ** apObjArray)
+HRESULT EventSink::Indicate(long lObjectCount, IWbemClassObject ** apObjArray)
 {
     HRESULT hres = S_OK;
 

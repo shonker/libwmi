@@ -10,11 +10,13 @@ ULONG QuerySink::AddRef()
     return InterlockedIncrement(&m_lRef);
 }
 
+
 ULONG QuerySink::Release()
 {
     LONG lRef = InterlockedDecrement(&m_lRef);
     if (lRef == 0)
         delete this;
+
     return lRef;
 }
 
@@ -24,20 +26,19 @@ HRESULT QuerySink::QueryInterface(REFIID riid, void ** ppv)
         *ppv = (IWbemObjectSink *)this;
         AddRef();
         return WBEM_S_NO_ERROR;
-    } else return E_NOINTERFACE;
+    } else {
+        return E_NOINTERFACE;
+    }
 }
 
 
-HRESULT QuerySink::Indicate(long lObjectCount,
-                            IWbemClassObject ** apObjArray)
+HRESULT QuerySink::Indicate(long lObjectCount, IWbemClassObject ** apObjArray)
 {
     HRESULT hres = S_OK;
 
     for (int i = 0; i < lObjectCount; i++) {
         VARIANT varName;
-        hres = apObjArray[i]->Get(_bstr_t(L"Name"),
-                                  0, &varName, 0, 0);
-
+        hres = apObjArray[i]->Get(_bstr_t(L"Name"), 0, &varName, 0, 0);
         if (FAILED(hres)) {
             cout << "Failed to get the data from the query"
                 << " Error code = 0x"

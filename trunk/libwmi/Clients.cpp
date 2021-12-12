@@ -32,7 +32,8 @@ connects to WMI on the local computer, calls a provider method, and then cleans 
 The Win32_Process::Create method is used to start Notepad.exe in a new process.
 
 The following procedure is used to execute the WMI application.
-Steps 1 through 5 contain all of the steps needed to set up and connect to WMI, and 6 is where the provider method is called.
+Steps 1 through 5 contain all of the steps needed to set up and connect to WMI,
+and 6 is where the provider method is called.
 
 To call a provider method
 
@@ -57,15 +58,20 @@ Set IWbemServices proxy security so the WMI service can impersonate the client b
 
 For more information, see Setting the Security Levels on a WMI Connection.
 
-Use the IWbemServices pointer to make requests to WMI. This example uses IWbemServices::ExecMethod to call the provider method Win32_Process::Create.
+Use the IWbemServices pointer to make requests to WMI.
+This example uses IWbemServices::ExecMethod to call the provider method Win32_Process::Create.
 
-For more information about making requests to WMI, see Manipulating Class and Instance Information and Calling a Method.
+For more information about making requests to WMI,
+see Manipulating Class and Instance Information and Calling a Method.
 
-If the provider method has any in-parameters or out-parameters, then values of the parameters must be given to IWbemClassObject pointers.
-For in-parameters, you must spawn an instance of the in-parameter definitions, and then set the values of these new instances.
+If the provider method has any in-parameters or out-parameters,
+then values of the parameters must be given to IWbemClassObject pointers.
+For in-parameters, you must spawn an instance of the in-parameter definitions,
+and then set the values of these new instances.
 The Win32_Process::Create method requires a value for the CommandLine in-parameter to execute properly.
 
-The following code example creates an IWbemClassObject pointer, spawns a new instance of the Win32_Process::Create in-parameter definitions,
+The following code example creates an IWbemClassObject pointer,
+spawns a new instance of the Win32_Process::Create in-parameter definitions,
 and then sets the value of the CommandLine in-parameter to Notepad.exe.
 
 // Set up to call the Win32_Process::Create method
@@ -109,16 +115,14 @@ https://docs.microsoft.com/zh-cn/windows/win32/wmisdk/example--calling-a-provide
 {
     HRESULT hres;
 
-    // Step 1: --------------------------------------------------
-    // Initialize COM. ------------------------------------------
+    // Step 1: Initialize COM. 
     hres = CoInitializeEx(0, COINIT_MULTITHREADED);
     if (FAILED(hres)) {
         cout << "Failed to initialize COM library. Error code = 0x" << hex << hres << endl;
-        return 1;                  // Program has failed.
+        return 1;// Program has failed.
     }
 
-    // Step 2: --------------------------------------------------
-    // Set general COM security levels --------------------------
+    // Step 2: Set general COM security levels 
     hres = CoInitializeSecurity(
         NULL,
         -1,                          // COM negotiates service
@@ -133,11 +137,10 @@ https://docs.microsoft.com/zh-cn/windows/win32/wmisdk/example--calling-a-provide
     if (FAILED(hres)) {
         cout << "Failed to initialize security. Error code = 0x" << hex << hres << endl;
         CoUninitialize();
-        return 1;                      // Program has failed.
+        return 1;// Program has failed.
     }
 
-    // Step 3: ---------------------------------------------------
-    // Obtain the initial locator to WMI -------------------------
+    // Step 3: Obtain the initial locator to WMI
     IWbemLocator * pLoc = NULL;
     hres = CoCreateInstance(CLSID_WbemLocator, 0, CLSCTX_INPROC_SERVER, IID_IWbemLocator, (LPVOID *)&pLoc);
     if (FAILED(hres)) {
@@ -146,9 +149,7 @@ https://docs.microsoft.com/zh-cn/windows/win32/wmisdk/example--calling-a-provide
         return 1;                 // Program has failed.
     }
 
-    // Step 4: ---------------------------------------------------
-    // Connect to WMI through the IWbemLocator::ConnectServer method
-
+    // Step 4: Connect to WMI through the IWbemLocator::ConnectServer method
     IWbemServices * pSvc = NULL;
 
     // Connect to the local root\cimv2 namespace and obtain pointer pSvc to make IWbemServices calls.
@@ -162,8 +163,7 @@ https://docs.microsoft.com/zh-cn/windows/win32/wmisdk/example--calling-a-provide
 
     cout << "Connected to ROOT\\CIMV2 WMI namespace" << endl;
 
-    // Step 5: --------------------------------------------------
-    // Set security levels for the proxy ------------------------
+    // Step 5: Set security levels for the proxy 
     hres = CoSetProxyBlanket(
         pSvc,                        // Indicates the proxy to set
         RPC_C_AUTHN_WINNT,           // RPC_C_AUTHN_xxx 
@@ -182,8 +182,7 @@ https://docs.microsoft.com/zh-cn/windows/win32/wmisdk/example--calling-a-provide
         return 1;               // Program has failed.
     }
 
-    // Step 6: --------------------------------------------------
-    // Use the IWbemServices pointer to make requests of WMI ----
+    // Step 6: Use the IWbemServices pointer to make requests of WMI 
 
     // set up to call the Win32_Process::Create method
     BSTR MethodName = SysAllocString(L"Create");
@@ -210,7 +209,6 @@ https://docs.microsoft.com/zh-cn/windows/win32/wmisdk/example--calling-a-provide
     // Execute Method
     IWbemClassObject * pOutParams = NULL;
     hres = pSvc->ExecMethod(ClassName, MethodName, 0, NULL, pClassInstance, &pOutParams, NULL);
-
     if (FAILED(hres)) {
         cout << "Could not execute method. Error code = 0x" << hex << hres << endl;
         VariantClear(&varCommand);
@@ -232,7 +230,6 @@ https://docs.microsoft.com/zh-cn/windows/win32/wmisdk/example--calling-a-provide
     hres = pOutParams->Get(_bstr_t(L"ReturnValue"), 0, &varReturnValue, NULL, 0);
 
     // Clean up
-    //--------------------------
     VariantClear(&varCommand);
     VariantClear(&varReturnValue);
     SysFreeString(ClassName);
@@ -255,7 +252,8 @@ Example: Receiving Event Notifications Through WMI
 
 You can use the procedure and code example in this topic to complete WMI client application that performs COM initialization,
 connects to WMI on the local computer, receives an event notification, and then cleans up.
-The example notifies the user of an event when a new process is created. The events are received asynchronously.
+The example notifies the user of an event when a new process is created.
+The events are received asynchronously.
 
 The following procedure is used to execute the WMI application.
 Steps 1 through 5 contain all of the steps required to set up and connect to WMI,
@@ -294,7 +292,8 @@ For this example the EventSink::Indicate method is called whenever a process is 
 To test this example, run the code and start a process such as Notepad.exe.
 This triggers an event notification.
 
-For more information about making requests of WMI, see Manipulating Class and Instance Information and Calling a Method.
+For more information about making requests of WMI,
+see Manipulating Class and Instance Information and Calling a Method.
 
 The following example code receives event notifications through WMI.
 
@@ -303,16 +302,14 @@ https://docs.microsoft.com/zh-cn/windows/win32/wmisdk/example--receiving-event-n
 {
     HRESULT hres;
 
-    // Step 1: --------------------------------------------------
-    // Initialize COM. ------------------------------------------
+    // Step 1: Initialize COM. 
     hres = CoInitializeEx(0, COINIT_MULTITHREADED);
     if (FAILED(hres)) {
         cout << "Failed to initialize COM library. Error code = 0x" << hex << hres << endl;
         return 1;                  // Program has failed.
     }
 
-    // Step 2: --------------------------------------------------
-    // Set general COM security levels --------------------------
+    // Step 2: Set general COM security levels 
     hres = CoInitializeSecurity(
         NULL,
         -1,                          // COM negotiates service
@@ -330,8 +327,7 @@ https://docs.microsoft.com/zh-cn/windows/win32/wmisdk/example--receiving-event-n
         return 1;                      // Program has failed.
     }
 
-    // Step 3: ---------------------------------------------------
-    // Obtain the initial locator to WMI -------------------------
+    // Step 3: Obtain the initial locator to WMI 
     IWbemLocator * pLoc = NULL;
     hres = CoCreateInstance(CLSID_WbemLocator, 0, CLSCTX_INPROC_SERVER, IID_IWbemLocator, (LPVOID *)&pLoc);
     if (FAILED(hres)) {
@@ -340,9 +336,7 @@ https://docs.microsoft.com/zh-cn/windows/win32/wmisdk/example--receiving-event-n
         return 1;                 // Program has failed.
     }
 
-    // Step 4: ---------------------------------------------------
-    // Connect to WMI through the IWbemLocator::ConnectServer method
-
+    // Step 4: Connect to WMI through the IWbemLocator::ConnectServer method
     IWbemServices * pSvc = NULL;
 
     // Connect to the local root\cimv2 namespace and obtain pointer pSvc to make IWbemServices calls.
@@ -356,8 +350,7 @@ https://docs.microsoft.com/zh-cn/windows/win32/wmisdk/example--receiving-event-n
 
     cout << "Connected to ROOT\\CIMV2 WMI namespace" << endl;
 
-    // Step 5: --------------------------------------------------
-    // Set security levels on the proxy -------------------------
+    // Step 5: Set security levels on the proxy 
     hres = CoSetProxyBlanket(
         pSvc,                        // Indicates the proxy to set
         RPC_C_AUTHN_WINNT,           // RPC_C_AUTHN_xxx 
@@ -376,8 +369,7 @@ https://docs.microsoft.com/zh-cn/windows/win32/wmisdk/example--receiving-event-n
         return 1;               // Program has failed.
     }
 
-    // Step 6: -------------------------------------------------
-    // Receive event notifications -----------------------------
+    // Step 6: Receive event notifications 
 
     // Use an unsecured apartment for security
     IUnsecuredApartment * pUnsecApp = NULL;
@@ -400,8 +392,8 @@ https://docs.microsoft.com/zh-cn/windows/win32/wmisdk/example--receiving-event-n
     hres = pSvc->ExecNotificationQueryAsync(
         _bstr_t("WQL"),
         _bstr_t("SELECT * "
-        "FROM __InstanceCreationEvent WITHIN 1 "
-        "WHERE TargetInstance ISA 'Win32_Process'"),
+                "FROM __InstanceCreationEvent WITHIN 1 "
+                "WHERE TargetInstance ISA 'Win32_Process'"),
         WBEM_FLAG_SEND_STATUS,
         NULL,
         pStubSink);
@@ -425,7 +417,6 @@ https://docs.microsoft.com/zh-cn/windows/win32/wmisdk/example--receiving-event-n
     hres = pSvc->CancelAsyncCall(pStubSink);
 
     // Cleanup
-    // ========
     pSvc->Release();
     pLoc->Release();
     pUnsecApp->Release();
@@ -466,7 +457,8 @@ Obtain the initial locator to WMI by calling CoCreateInstance.
 For more information, see Creating a Connection to a WMI Namespace.
 
 Obtain a pointer to IWbemServices for the root\cimv2 namespace on the local computer by calling IWbemLocator::ConnectServer.
-For more information about how to connect to a remote computer, see Example: Getting WMI Data from a Remote Computer.
+For more information about how to connect to a remote computer,
+see Example: Getting WMI Data from a Remote Computer.
 
 For more information, see Creating a Connection to a WMI Namespace.
 
@@ -481,7 +473,8 @@ This example provides the implementation in the QuerySink class.
 The implementation code and header file code for this class are provided following the main example.
 The IWbemServices::ExecQueryAsync method calls the QuerySink::Indicate method whenever the data is received.
 
-For more information about how to create a WMI request, see Manipulating Class and Instance Information and Calling a Method.
+For more information about how to create a WMI request,
+see Manipulating Class and Instance Information and Calling a Method.
 
 Wait for the data to be retrieved asynchronously.
 Use the IWbemServices::CancelAsyncCall method to manually stop the asynchronous call.
@@ -493,16 +486,14 @@ https://docs.microsoft.com/zh-cn/windows/win32/wmisdk/example--getting-wmi-data-
 {
     HRESULT hres;
 
-    // Step 1: --------------------------------------------------
-    // Initialize COM. ------------------------------------------
+    // Step 1: Initialize COM. 
     hres = CoInitializeEx(0, COINIT_MULTITHREADED);
     if (FAILED(hres)) {
         cout << "Failed to initialize COM library. Error code = 0x" << hex << hres << endl;
         return 1;                  // Program has failed.
     }
 
-    // Step 2: --------------------------------------------------
-    // Set general COM security levels --------------------------
+    // Step 2: Set general COM security levels 
     hres = CoInitializeSecurity(NULL,
                                 -1,                          // COM authentication
                                 NULL,                        // Authentication services
@@ -518,8 +509,7 @@ https://docs.microsoft.com/zh-cn/windows/win32/wmisdk/example--getting-wmi-data-
         return 1;                    // Program has failed.
     }
 
-    // Step 3: ---------------------------------------------------
-    // Obtain the initial locator to WMI -------------------------
+    // Step 3: Obtain the initial locator to WMI 
     IWbemLocator * pLoc = NULL;
     hres = CoCreateInstance(CLSID_WbemLocator, 0, CLSCTX_INPROC_SERVER, IID_IWbemLocator, (LPVOID *)&pLoc);
     if (FAILED(hres)) {
@@ -528,12 +518,10 @@ https://docs.microsoft.com/zh-cn/windows/win32/wmisdk/example--getting-wmi-data-
         return 1;                 // Program has failed.
     }
 
-    // Step 4: -----------------------------------------------------
-    // Connect to WMI through the IWbemLocator::ConnectServer method
+    // Step 4: Connect to WMI through the IWbemLocator::ConnectServer method
     IWbemServices * pSvc = NULL;
 
-    // Connect to the local root\cimv2 namespace
-    // and obtain pointer pSvc to make IWbemServices calls.
+    // Connect to the local root\cimv2 namespace and obtain pointer pSvc to make IWbemServices calls.
     hres = pLoc->ConnectServer(_bstr_t(L"ROOT\\CIMV2"), NULL, NULL, 0, NULL, 0, 0, &pSvc);
     if (FAILED(hres)) {
         cout << "Could not connect. Error code = 0x" << hex << hres << endl;
@@ -544,8 +532,7 @@ https://docs.microsoft.com/zh-cn/windows/win32/wmisdk/example--getting-wmi-data-
 
     cout << "Connected to ROOT\\CIMV2 WMI namespace" << endl;
 
-    // Step 5: --------------------------------------------------
-    // Set security levels on the proxy -------------------------
+    // Step 5: Set security levels on the proxy 
     hres = CoSetProxyBlanket(pSvc,                        // Indicates the proxy to set
                              RPC_C_AUTHN_WINNT,           // RPC_C_AUTHN_xxx
                              RPC_C_AUTHZ_NONE,            // RPC_C_AUTHZ_xxx
@@ -562,8 +549,7 @@ https://docs.microsoft.com/zh-cn/windows/win32/wmisdk/example--getting-wmi-data-
         return 1;               // Program has failed.
     }
 
-    // Step 6: --------------------------------------------------
-    // Use the IWbemServices pointer to make requests of WMI ----
+    // Step 6: Use the IWbemServices pointer to make requests of WMI 
 
     // For example, get the name of the operating system.
     // The IWbemService::ExecQueryAsync method will call
@@ -585,13 +571,11 @@ https://docs.microsoft.com/zh-cn/windows/win32/wmisdk/example--getting-wmi-data-
         return 1;               // Program has failed.
     }
 
-    // Step 7: -------------------------------------------------
-    // Wait to get the data from the query in step 6 -----------
+    // Step 7: Wait to get the data from the query in step 6 
     Sleep(500);
     pSvc->CancelAsyncCall(pResponseSink);
 
     // Cleanup
-    // ========
     pSvc->Release();
     pLoc->Release();
     CoUninitialize();
@@ -612,16 +596,14 @@ https://docs.microsoft.com/zh-cn/windows/win32/wmisdk/example--getting-wmi-data-
 {
     HRESULT hres;
 
-    // Step 1: --------------------------------------------------
-    // Initialize COM. ------------------------------------------
+    // Step 1: Initialize COM. 
     hres = CoInitializeEx(0, COINIT_MULTITHREADED);
     if (FAILED(hres)) {
         cout << "Failed to initialize COM library. Error code = 0x" << hex << hres << endl;
         return 1;                  // Program has failed.
     }
 
-    // Step 2: --------------------------------------------------
-    // Set general COM security levels --------------------------
+    // Step 2: Set general COM security levels
     hres = CoInitializeSecurity(
         NULL,
         -1,                          // COM authentication
@@ -639,8 +621,7 @@ https://docs.microsoft.com/zh-cn/windows/win32/wmisdk/example--getting-wmi-data-
         return 1;                    // Program has failed.
     }
 
-    // Step 3: ---------------------------------------------------
-    // Obtain the initial locator to WMI -------------------------
+    // Step 3: Obtain the initial locator to WMI 
     IWbemLocator * pLoc = NULL;
     hres = CoCreateInstance(CLSID_WbemLocator, 0, CLSCTX_INPROC_SERVER, IID_IWbemLocator, (LPVOID *)&pLoc);
     if (FAILED(hres)) {
@@ -649,8 +630,7 @@ https://docs.microsoft.com/zh-cn/windows/win32/wmisdk/example--getting-wmi-data-
         return 1;                 // Program has failed.
     }
 
-    // Step 4: -----------------------------------------------------
-    // Connect to WMI through the IWbemLocator::ConnectServer method
+    // Step 4: Connect to WMI through the IWbemLocator::ConnectServer method
     IWbemServices * pSvc = NULL;
 
     // Get the user name and password for the remote computer
@@ -702,18 +682,15 @@ https://docs.microsoft.com/zh-cn/windows/win32/wmisdk/example--getting-wmi-data-
         StringCchPrintf(pszAuthority, CREDUI_MAX_USERNAME_LENGTH + 1, L"kERBEROS:%s", L"COMPUTERNAME");
     }
 
-    // Connect to the remote root\cimv2 namespace
-    // and obtain pointer pSvc to make IWbemServices calls.
-    //---------------------------------------------------------
-    hres = pLoc->ConnectServer(
-        _bstr_t(L"\\\\COMPUTERNAME\\root\\cimv2"),
-        _bstr_t(useToken ? NULL : pszName),    // User name
-        _bstr_t(useToken ? NULL : pszPwd),     // User password
-        NULL,                              // Locale             
-        NULL,                              // Security flags
-        _bstr_t(useNTLM ? NULL : pszAuthority),// Authority        
-        NULL,                              // Context object 
-        &pSvc                              // IWbemServices proxy
+    // Connect to the remote root\cimv2 namespace and obtain pointer pSvc to make IWbemServices calls.
+    hres = pLoc->ConnectServer(_bstr_t(L"\\\\COMPUTERNAME\\root\\cimv2"),
+                               _bstr_t(useToken ? NULL : pszName),    // User name
+                               _bstr_t(useToken ? NULL : pszPwd),     // User password
+                               NULL,                              // Locale             
+                               NULL,                              // Security flags
+                               _bstr_t(useNTLM ? NULL : pszAuthority),// Authority        
+                               NULL,                              // Context object 
+                               &pSvc                              // IWbemServices proxy
     );
     if (FAILED(hres)) {
         cout << "Could not connect. Error code = 0x" << hex << hres << endl;
@@ -724,8 +701,7 @@ https://docs.microsoft.com/zh-cn/windows/win32/wmisdk/example--getting-wmi-data-
 
     cout << "Connected to ROOT\\CIMV2 WMI namespace" << endl;
 
-    // step 5: --------------------------------------------------
-    // Create COAUTHIDENTITY that can be used for setting security on proxy
+    // step 5: Create COAUTHIDENTITY that can be used for setting security on proxy
     COAUTHIDENTITY * userAcct = NULL;
     COAUTHIDENTITY authIdent;
 
@@ -755,8 +731,7 @@ https://docs.microsoft.com/zh-cn/windows/win32/wmisdk/example--getting-wmi-data-
         userAcct = &authIdent;
     }
 
-    // Step 6: --------------------------------------------------
-    // Set security levels on a WMI connection ------------------
+    // Step 6: Set security levels on a WMI connection 
     hres = CoSetProxyBlanket(
         pSvc,                           // Indicates the proxy to set
         RPC_C_AUTHN_DEFAULT,            // RPC_C_AUTHN_xxx
@@ -775,17 +750,15 @@ https://docs.microsoft.com/zh-cn/windows/win32/wmisdk/example--getting-wmi-data-
         return 1;               // Program has failed.
     }
 
-    // Step 7: --------------------------------------------------
-    // Use the IWbemServices pointer to make requests of WMI ----
+    // Step 7: Use the IWbemServices pointer to make requests of WMI 
 
     // For example, get the name of the operating system
     IEnumWbemClassObject * pEnumerator = NULL;
-    hres = pSvc->ExecQuery(
-        bstr_t("WQL"),
-        bstr_t("Select * from Win32_OperatingSystem"),
-        WBEM_FLAG_FORWARD_ONLY | WBEM_FLAG_RETURN_IMMEDIATELY,
-        NULL,
-        &pEnumerator);
+    hres = pSvc->ExecQuery(bstr_t("WQL"),
+                           bstr_t("Select * from Win32_OperatingSystem"),
+                           WBEM_FLAG_FORWARD_ONLY | WBEM_FLAG_RETURN_IMMEDIATELY,
+                           NULL,
+                           &pEnumerator);
     if (FAILED(hres)) {
         cout << "Query for operating system name failed." << " Error code = 0x" << hex << hres << endl;
         pSvc->Release();
@@ -794,8 +767,7 @@ https://docs.microsoft.com/zh-cn/windows/win32/wmisdk/example--getting-wmi-data-
         return 1;               // Program has failed.
     }
 
-    // Step 8: -------------------------------------------------
-    // Secure the enumerator proxy
+    // Step 8: Secure the enumerator proxy
     hres = CoSetProxyBlanket(
         pEnumerator,                    // Indicates the proxy to set
         RPC_C_AUTHN_DEFAULT,            // RPC_C_AUTHN_xxx
@@ -822,8 +794,7 @@ https://docs.microsoft.com/zh-cn/windows/win32/wmisdk/example--getting-wmi-data-
     SecureZeroMemory(pszUserName, sizeof(pszUserName));
     SecureZeroMemory(pszDomain, sizeof(pszDomain));
 
-    // Step 9: -------------------------------------------------
-    // Get the data from the query in step 7 -------------------
+    // Step 9: Get the data from the query in step 7
     IWbemClassObject * pclsObj = NULL;
     ULONG uReturn = 0;
 
@@ -849,7 +820,6 @@ https://docs.microsoft.com/zh-cn/windows/win32/wmisdk/example--getting-wmi-data-
     }
 
     // Cleanup
-    // ========
     pSvc->Release();
     pLoc->Release();
     pEnumerator->Release();
@@ -875,7 +845,8 @@ To retrieve data from a remote computer, see Example: Getting WMI Data from a Re
 For getting the data asynchronously, see Example: Getting WMI Data from the Local Computer Asynchronously.
 
 The following procedure is used to execute the WMI application.
-Steps 1 through 5 contain all the steps required to set up and connect to WMI, and steps 6 and 7 are where data is queried and received.
+Steps 1 through 5 contain all the steps required to set up and
+connect to WMI, and steps 6 and 7 are where data is queried and received.
 
 Initialize COM parameters with a call to CoInitializeEx.
 
@@ -908,9 +879,11 @@ SELECT * FROM Win32_OperatingSystem
 The result of this query is stored in an IEnumWbemClassObject pointer.
 This allows the data objects from the query to be retrieved semisynchronously with the IEnumWbemClassObject interface.
 For more information, see Enumerating WMI.
-For getting the data asynchronously, see Example: Getting WMI Data from the Local Computer Asynchronously.
+For getting the data asynchronously,
+see Example: Getting WMI Data from the Local Computer Asynchronously.
 
-For more information about making requests to WMI, see Manipulating Class and Instance Information, Querying WMI, and Calling a Method.
+For more information about making requests to WMI,
+see Manipulating Class and Instance Information, Querying WMI, and Calling a Method.
 
 Get and display the data from the WQL query.
 The IEnumWbemClassObject pointer is linked to the data objects that the query returned,
@@ -918,7 +891,8 @@ and the data objects can be retrieved with the IEnumWbemClassObject::Next method
 This method links the data objects to an IWbemClassObject pointer that is passed into the method.
 Use the IWbemClassObject::Get method to get the desired information from the data objects.
 
-The following code example is used to get the Name property from the data object, which provides the name of the operating system.
+The following code example is used to get the Name property from the data object,
+which provides the name of the operating system.
 
 C++
 
@@ -926,7 +900,8 @@ VARIANT vtProp;
 
 // Get the value of the Name property
 hr = pclsObj->Get(L"Name", 0, &vtProp, 0, 0);
-After the value of the Name property is stored in the VARIANT variable vtProp, it can then be displayed to the user.
+After the value of the Name property is stored in the VARIANT variable vtProp,
+it can then be displayed to the user.
 
 For more information, see Enumerating WMI.
 
@@ -937,16 +912,14 @@ https://docs.microsoft.com/zh-cn/windows/win32/wmisdk/example--getting-wmi-data-
 {
     HRESULT hres;
 
-    // Step 1: --------------------------------------------------
-    // Initialize COM. ------------------------------------------
+    // Step 1: Initialize COM. 
     hres = CoInitializeEx(0, COINIT_MULTITHREADED);
     if (FAILED(hres)) {
         cout << "Failed to initialize COM library. Error code = 0x" << hex << hres << endl;
         return 1;                  // Program has failed.
     }
 
-    // Step 2: --------------------------------------------------
-    // Set general COM security levels --------------------------
+    // Step 2: Set general COM security levels 
     hres = CoInitializeSecurity(
         NULL,
         -1,                          // COM authentication
@@ -964,28 +937,24 @@ https://docs.microsoft.com/zh-cn/windows/win32/wmisdk/example--getting-wmi-data-
         return 1;                    // Program has failed.
     }
 
-    // Step 3: ---------------------------------------------------
-    // Obtain the initial locator to WMI -------------------------
+    // Step 3: Obtain the initial locator to WMI 
     IWbemLocator * pLoc = NULL;
-    hres = CoCreateInstance(
-        CLSID_WbemLocator,
-        0,
-        CLSCTX_INPROC_SERVER,
-        IID_IWbemLocator, (LPVOID *)&pLoc);
+    hres = CoCreateInstance(CLSID_WbemLocator,
+                            0,
+                            CLSCTX_INPROC_SERVER,
+                            IID_IWbemLocator, (LPVOID *)&pLoc);
     if (FAILED(hres)) {
         cout << "Failed to create IWbemLocator object." << " Err code = 0x" << hex << hres << endl;
         CoUninitialize();
         return 1;                 // Program has failed.
     }
 
-    // Step 4: -----------------------------------------------------
-    // Connect to WMI through the IWbemLocator::ConnectServer method
+    // Step 4: Connect to WMI through the IWbemLocator::ConnectServer method
 
     IWbemServices * pSvc = NULL;
 
     // Connect to the root\cimv2 namespace with
-    // the current user and obtain pointer pSvc
-    // to make IWbemServices calls.
+    // the current user and obtain pointer pSvc to make IWbemServices calls.
     hres = pLoc->ConnectServer(
         _bstr_t(L"ROOT\\CIMV2"), // Object path of WMI namespace
         NULL,                    // User name. NULL = current user
@@ -1005,8 +974,7 @@ https://docs.microsoft.com/zh-cn/windows/win32/wmisdk/example--getting-wmi-data-
 
     cout << "Connected to ROOT\\CIMV2 WMI namespace" << endl;
 
-    // Step 5: --------------------------------------------------
-    // Set security levels on the proxy -------------------------
+    // Step 5: Set security levels on the proxy 
     hres = CoSetProxyBlanket(
         pSvc,                        // Indicates the proxy to set
         RPC_C_AUTHN_WINNT,           // RPC_C_AUTHN_xxx
@@ -1025,17 +993,15 @@ https://docs.microsoft.com/zh-cn/windows/win32/wmisdk/example--getting-wmi-data-
         return 1;               // Program has failed.
     }
 
-    // Step 6: --------------------------------------------------
-    // Use the IWbemServices pointer to make requests of WMI ----
+    // Step 6: Use the IWbemServices pointer to make requests of WMI 
 
     // For example, get the name of the operating system
     IEnumWbemClassObject * pEnumerator = NULL;
-    hres = pSvc->ExecQuery(
-        bstr_t("WQL"),
-        bstr_t("SELECT * FROM Win32_OperatingSystem"),
-        WBEM_FLAG_FORWARD_ONLY | WBEM_FLAG_RETURN_IMMEDIATELY,
-        NULL,
-        &pEnumerator);
+    hres = pSvc->ExecQuery(bstr_t("WQL"),
+                           bstr_t("SELECT * FROM Win32_OperatingSystem"),
+                           WBEM_FLAG_FORWARD_ONLY | WBEM_FLAG_RETURN_IMMEDIATELY,
+                           NULL,
+                           &pEnumerator);
     if (FAILED(hres)) {
         cout << "Query for operating system name failed." << " Error code = 0x" << hex << hres << endl;
         pSvc->Release();
@@ -1044,15 +1010,12 @@ https://docs.microsoft.com/zh-cn/windows/win32/wmisdk/example--getting-wmi-data-
         return 1;               // Program has failed.
     }
 
-    // Step 7: -------------------------------------------------
-    // Get the data from the query in step 6 -------------------
-
+    // Step 7: Get the data from the query in step 6 
     IWbemClassObject * pclsObj = NULL;
     ULONG uReturn = 0;
 
     while (pEnumerator) {
         HRESULT hr = pEnumerator->Next(WBEM_INFINITE, 1, &pclsObj, &uReturn);
-
         if (0 == uReturn) {
             break;
         }
@@ -1068,8 +1031,6 @@ https://docs.microsoft.com/zh-cn/windows/win32/wmisdk/example--getting-wmi-data-
     }
 
     // Cleanup
-    // ========
-
     pSvc->Release();
     pLoc->Release();
     pEnumerator->Release();
@@ -1150,8 +1111,7 @@ https://docs.microsoft.com/zh-cn/windows/win32/wmisdk/example-creating-a-wmi-app
         return 1;          // Program has failed.
     }
 
-    // Obtain the initial locator to Windows Management
-    // on a particular host computer.
+    // Obtain the initial locator to Windows Management on a particular host computer.
     IWbemLocator * pLoc = 0;
     hres = CoCreateInstance(CLSID_WbemLocator, 0, CLSCTX_INPROC_SERVER, IID_IWbemLocator, (LPVOID *)&pLoc);
     if (FAILED(hres)) {
@@ -1208,12 +1168,11 @@ https://docs.microsoft.com/zh-cn/windows/win32/wmisdk/example-creating-a-wmi-app
 
     // For example, query for all the running processes
     IEnumWbemClassObject * pEnumerator = NULL;
-    hres = pSvc->ExecQuery(
-        bstr_t("WQL"),
-        bstr_t("SELECT * FROM Win32_Process"),
-        WBEM_FLAG_FORWARD_ONLY | WBEM_FLAG_RETURN_IMMEDIATELY,
-        NULL,
-        &pEnumerator);
+    hres = pSvc->ExecQuery(bstr_t("WQL"),
+                           bstr_t("SELECT * FROM Win32_Process"),
+                           WBEM_FLAG_FORWARD_ONLY | WBEM_FLAG_RETURN_IMMEDIATELY,
+                           NULL,
+                           &pEnumerator);
     if (FAILED(hres)) {
         cout << "Query for processes failed. " << "Error code = 0x" << hex << hres << endl;
         pSvc->Release();
@@ -1226,7 +1185,6 @@ https://docs.microsoft.com/zh-cn/windows/win32/wmisdk/example-creating-a-wmi-app
 
         while (pEnumerator) {
             hres = pEnumerator->Next(WBEM_INFINITE, 1, &pclsObj, &uReturn);
-
             if (0 == uReturn) {
                 break;
             }
@@ -1244,7 +1202,6 @@ https://docs.microsoft.com/zh-cn/windows/win32/wmisdk/example-creating-a-wmi-app
     }
 
     // Cleanup
-    // ========
     pSvc->Release();
     pLoc->Release();
     pEnumerator->Release();
@@ -1267,8 +1224,7 @@ Each call to the Refresh method updates the number of instances and the instance
 https://docs.microsoft.com/zh-cn/windows/win32/wmisdk/accessing-performance-data-in-c--
 */
 {
-    // To add error checking,
-    // check returned HRESULT below where collected.
+    // To add error checking, check returned HRESULT below where collected.
     HRESULT                 hr = S_OK;
     IWbemRefresher * pRefresher = NULL;
     IWbemConfigureRefresher * pConfig = NULL;
@@ -1292,23 +1248,21 @@ https://docs.microsoft.com/zh-cn/windows/win32/wmisdk/accessing-performance-data
         goto CLEANUP;
     }
 
-    if (FAILED(hr = CoInitializeSecurity(
-        NULL,
-        -1,
-        NULL,
-        NULL,
-        RPC_C_AUTHN_LEVEL_NONE,
-        RPC_C_IMP_LEVEL_IMPERSONATE,
-        NULL, EOAC_NONE, 0))) {
+    if (FAILED(hr = CoInitializeSecurity(NULL,
+                                         -1,
+                                         NULL,
+                                         NULL,
+                                         RPC_C_AUTHN_LEVEL_NONE,
+                                         RPC_C_IMP_LEVEL_IMPERSONATE,
+                                         NULL, EOAC_NONE, 0))) {
         goto CLEANUP;
     }
 
-    if (FAILED(hr = CoCreateInstance(
-        CLSID_WbemLocator,
-        NULL,
-        CLSCTX_INPROC_SERVER,
-        IID_IWbemLocator,
-        (void **)&pWbemLocator))) {
+    if (FAILED(hr = CoCreateInstance(CLSID_WbemLocator,
+                                     NULL,
+                                     CLSCTX_INPROC_SERVER,
+                                     IID_IWbemLocator,
+                                     (void **)&pWbemLocator))) {
         goto CLEANUP;
     }
 
@@ -1318,15 +1272,14 @@ https://docs.microsoft.com/zh-cn/windows/win32/wmisdk/accessing-performance-data
         hr = E_OUTOFMEMORY;
         goto CLEANUP;
     }
-    if (FAILED(hr = pWbemLocator->ConnectServer(
-        bstrNameSpace,
-        NULL, // User name
-        NULL, // Password
-        NULL, // Locale
-        0L,   // Security flags
-        NULL, // Authority
-        NULL, // Wbem context
-        &pNameSpace))) {
+    if (FAILED(hr = pWbemLocator->ConnectServer(bstrNameSpace,
+                                                NULL, // User name
+                                                NULL, // Password
+                                                NULL, // Locale
+                                                0L,   // Security flags
+                                                NULL, // Authority
+                                                NULL, // Wbem context
+                                                &pNameSpace))) {
         goto CLEANUP;
     }
     pWbemLocator->Release();
@@ -1334,12 +1287,11 @@ https://docs.microsoft.com/zh-cn/windows/win32/wmisdk/accessing-performance-data
     SysFreeString(bstrNameSpace);
     bstrNameSpace = NULL;
 
-    if (FAILED(hr = CoCreateInstance(
-        CLSID_WbemRefresher,
-        NULL,
-        CLSCTX_INPROC_SERVER,
-        IID_IWbemRefresher,
-        (void **)&pRefresher))) {
+    if (FAILED(hr = CoCreateInstance(CLSID_WbemRefresher,
+                                     NULL,
+                                     CLSCTX_INPROC_SERVER,
+                                     IID_IWbemRefresher,
+                                     (void **)&pRefresher))) {
         goto CLEANUP;
     }
 
@@ -1348,13 +1300,12 @@ https://docs.microsoft.com/zh-cn/windows/win32/wmisdk/accessing-performance-data
     }
 
     // Add an enumerator to the refresher.
-    if (FAILED(hr = pConfig->AddEnum(
-        pNameSpace,
-        L"Win32_PerfRawData_PerfProc_Process",
-        0,
-        NULL,
-        &pEnum,
-        &lID))) {
+    if (FAILED(hr = pConfig->AddEnum(pNameSpace,
+                                     L"Win32_PerfRawData_PerfProc_Process",
+                                     0,
+                                     NULL,
+                                     &pEnum,
+                                     &lID))) {
         goto CLEANUP;
     }
     pConfig->Release();
@@ -1373,8 +1324,7 @@ https://docs.microsoft.com/zh-cn/windows/win32/wmisdk/accessing-performance-data
         }
 
         hr = pEnum->GetObjects(0L, dwNumObjects, apEnumAccess, &dwNumReturned);
-        // If the buffer was not big enough,
-        // allocate a bigger buffer and retry.
+        // If the buffer was not big enough, allocate a bigger buffer and retry.
         if (hr == WBEM_E_BUFFER_TOO_SMALL && dwNumReturned > dwNumObjects) {
             apEnumAccess = new IWbemObjectAccess * [dwNumReturned];
             if (NULL == apEnumAccess) {
@@ -1398,29 +1348,23 @@ https://docs.microsoft.com/zh-cn/windows/win32/wmisdk/accessing-performance-data
         if (0 == x) {
             CIMTYPE VirtualBytesType;
             CIMTYPE ProcessHandleType;
-            if (FAILED(hr = apEnumAccess[0]->GetPropertyHandle(
-                L"VirtualBytes",
-                &VirtualBytesType,
-                &lVirtualBytesHandle))) {
+            if (FAILED(hr = apEnumAccess[0]->GetPropertyHandle(L"VirtualBytes",
+                                                               &VirtualBytesType,
+                                                               &lVirtualBytesHandle))) {
                 goto CLEANUP;
             }
-            if (FAILED(hr = apEnumAccess[0]->GetPropertyHandle(
-                L"IDProcess",
-                &ProcessHandleType,
-                &lIDProcessHandle))) {
+            if (FAILED(hr = apEnumAccess[0]->GetPropertyHandle(L"IDProcess",
+                                                               &ProcessHandleType,
+                                                               &lIDProcessHandle))) {
                 goto CLEANUP;
             }
         }
 
         for (i = 0; i < dwNumReturned; i++) {
-            if (FAILED(hr = apEnumAccess[i]->ReadDWORD(
-                lVirtualBytesHandle,
-                &dwVirtualBytes))) {
+            if (FAILED(hr = apEnumAccess[i]->ReadDWORD(lVirtualBytesHandle, &dwVirtualBytes))) {
                 goto CLEANUP;
             }
-            if (FAILED(hr = apEnumAccess[i]->ReadDWORD(
-                lIDProcessHandle,
-                &dwIDProcess))) {
+            if (FAILED(hr = apEnumAccess[i]->ReadDWORD(lIDProcessHandle, &dwIDProcess))) {
                 goto CLEANUP;
             }
 
@@ -1440,7 +1384,7 @@ https://docs.microsoft.com/zh-cn/windows/win32/wmisdk/accessing-performance-data
     }
 
     // exit loop here
-    CLEANUP:
+CLEANUP:
 
     if (NULL != bstrNameSpace) {
         SysFreeString(bstrNameSpace);
@@ -1504,9 +1448,7 @@ https://docs.microsoft.com/zh-cn/windows/win32/wmisdk/accessing-wmi-preinstalled
 
     // Connect to the desired namespace
     BSTR bstrNameSpace = SysAllocString(L"\\\\.\\root\\cimv2");
-
     HRESULT hr = WBEM_S_NO_ERROR;
-
     hr = pWbemLocator->ConnectServer(
         bstrNameSpace,      // Namespace name
         NULL,               // User name
@@ -1522,15 +1464,14 @@ https://docs.microsoft.com/zh-cn/windows/win32/wmisdk/accessing-wmi-preinstalled
         IUnknown * pUnk = NULL;
         pNameSpace->QueryInterface(IID_IUnknown, (void **)&pUnk);
 
-        hr = CoSetProxyBlanket(
-            pNameSpace,
-            RPC_C_AUTHN_WINNT,
-            RPC_C_AUTHZ_NONE,
-            NULL,
-            RPC_C_AUTHN_LEVEL_DEFAULT,
-            RPC_C_IMP_LEVEL_IMPERSONATE,
-            NULL,
-            EOAC_NONE);
+        hr = CoSetProxyBlanket(pNameSpace,
+                               RPC_C_AUTHN_WINNT,
+                               RPC_C_AUTHZ_NONE,
+                               NULL,
+                               RPC_C_AUTHN_LEVEL_DEFAULT,
+                               RPC_C_IMP_LEVEL_IMPERSONATE,
+                               NULL,
+                               EOAC_NONE);
         if (FAILED(hr)) {
             cout << "Cannot set proxy blanket. Error code: 0x" << hex << hr << endl;
             pNameSpace->Release();
@@ -1568,13 +1509,12 @@ https://docs.microsoft.com/zh-cn/windows/win32/wmisdk/accessing-wmi-preinstalled
         IWbemClassObject * pObj = NULL;
 
         // Add the instance to be refreshed.
-        pConfig->AddObjectByPath(
-            pNameSpace,
-            L"Win32_PerfRawData_PerfProc_Process.Name=\"WINWORD\"",
-            0L,
-            NULL,
-            &pObj,
-            NULL);
+        pConfig->AddObjectByPath(pNameSpace,
+                                 L"Win32_PerfRawData_PerfProc_Process.Name=\"WINWORD\"",
+                                 0L,
+                                 NULL,
+                                 &pObj,
+                                 NULL);
         if (FAILED(hr)) {
             cout << "Cannot add object. Error code: 0x" << hex << hr << endl;
             pNameSpace->Release();
